@@ -3189,11 +3189,6 @@ clone-response@^1.0.2:
   dependencies:
     mimic-response "^1.0.0"
 
-clone@^1.0.2:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
-  integrity sha1-2jCcwmPfFZlMaIypAheco8fNfH4=
-
 cluster-key-slot@1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/cluster-key-slot/-/cluster-key-slot-1.1.2.tgz#88ddaa46906e303b5de30d3153b7d9fe0a0c19ac"
@@ -3622,13 +3617,6 @@ deep-is@^0.1.3, deep-is@~0.1.3:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.4.tgz#a6f2dce612fadd2ef1f519b73551f17e85199831"
   integrity sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==
-
-defaults@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/defaults/-/defaults-1.0.3.tgz#c656051e9817d9ff08ed881477f3fe4019f3ef7d"
-  integrity sha1-xlYFHpgX2f8I7YgUd/P+QBnz730=
-  dependencies:
-    clone "^1.0.2"
 
 defer-to-connect@^1.0.1:
   version "1.1.3"
@@ -4567,6 +4555,11 @@ expect@^28.1.3:
     jest-message-util "^28.1.3"
     jest-util "^28.1.3"
 
+express-rate-limit@7:
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-7.4.0.tgz#5db412b8de83fa07ddb40f610c585ac8c1dab988"
+  integrity sha512-v1204w3cXu5gCDmAvgvzI6qjzZzoMWKnyVDk3ACgfswTQLYiGen+r8w0VnXnGMmzEN/g8fwIQ4JrFFd4ZP6ssg==
+
 express-session@^1.17.3:
   version "1.17.3"
   resolved "https://registry.yarnpkg.com/express-session/-/express-session-1.17.3.tgz#14b997a15ed43e5949cb1d073725675dd2777f36"
@@ -4581,12 +4574,12 @@ express-session@^1.17.3:
     safe-buffer "5.2.1"
     uid-safe "~2.1.5"
 
-express-slow-down@^1.3.1:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/express-slow-down/-/express-slow-down-1.4.0.tgz#89e0aef6c3bb3602b70f06e0824889bd2362cc21"
-  integrity sha512-Tw5aa0plPj2STiuc2SyMw2VSjMvBgLGQHHoPhkIL4iPQcFZDueWBaiLxFZ3SrwrJhiu3b3sHNcsP6lXeWnbwAw==
+express-slow-down@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/express-slow-down/-/express-slow-down-2.0.3.tgz#7b953a15c95105386d78370f8d172d88bb225dd6"
+  integrity sha512-vATCiFd8uQHtTeK5/Q0nLUukhZh+RV5zkcHxLQr0X5dEFVEYqzVXEe48nW23Z49fwtR+ApD9zn9sZRisTCR99w==
   dependencies:
-    defaults "^1.0.3"
+    express-rate-limit "7"
 
 express@4.21.1:
   version "4.21.1"
