@@ -333,13 +333,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 			dispatch(updateAuthorCredit(selectedAuthorCredit));
 		},
 		onDepthChange: (event) => dispatch(debouncedUpdateDepth(
-			event.target.value ? parseInt(event.target.value, 10) : null
+			event.target.value ? parseFloat(event.target.value) : null
 		)),
 		onEditionGroupChange: (value) => dispatch(updateEditionGroup(value)),
 		onFormatChange: (value: number) =>
 			dispatch(updateFormat(value)),
 		onHeightChange: (event) => dispatch(debouncedUpdateHeight(
-			event.target.value ? parseInt(event.target.value, 10) : null
+			event.target.value ? parseFloat(event.target.value) : null
 		)),
 		onPagesChange: (event) => dispatch(debouncedUpdatePages(
 			event.target.value ? parseInt(event.target.value, 10) : null
@@ -353,7 +353,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 			event.target.value ? parseInt(event.target.value, 10) : null
 		)),
 		onWidthChange: (event) => dispatch(debouncedUpdateWidth(
-			event.target.value ? parseInt(event.target.value, 10) : null
+			event.target.value ? parseFloat(event.target.value) : null
 		))
 	};
 }

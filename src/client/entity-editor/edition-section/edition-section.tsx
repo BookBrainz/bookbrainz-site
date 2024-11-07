@@ -513,7 +513,7 @@ function mapStateToProps(rootState: RootState): StateProps {
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 	return {
 		onDepthChange: (event) => dispatch(debouncedUpdateDepth(
-			event.target.value ? parseInt(event.target.value, 10) : null
+			event.target.value ? parseFloat(event.target.value) : null
 		)),
 		onEditionGroupChange: (value, action) => {
 			// If the user selected a new edition group, we need to clear the old one
@@ -532,7 +532,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 			}
 		},
 		onHeightChange: (event) => dispatch(debouncedUpdateHeight(
-			event.target.value ? parseInt(event.target.value, 10) : null
+			event.target.value ? parseFloat(event.target.value) : null
 		)),
 		onLanguagesChange: (values: Array<LanguageOption>) =>
 			dispatch(updateLanguages(values)),
@@ -554,7 +554,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 			event.target.value ? parseInt(event.target.value, 10) : null
 		)),
 		onWidthChange: (event) => dispatch(debouncedUpdateWidth(
-			event.target.value ? parseInt(event.target.value, 10) : null
+			event.target.value ? parseFloat(event.target.value) : null
 		))
 	};
 }
