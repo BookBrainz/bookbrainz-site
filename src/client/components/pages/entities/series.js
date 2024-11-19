@@ -29,6 +29,7 @@ import EntityLinks from './links';
 import EntityRelatedCollections from './related-collections';
 import EntityReviews from './cb-review';
 import EntityTitle from './title';
+import ImportFooter from '../import-entities/footer';
 import PropTypes from 'prop-types';
 import WikipediaExtract from './wikipedia-extract';
 
@@ -36,7 +37,7 @@ import WikipediaExtract from './wikipedia-extract';
 const {deletedEntityMessage, getEntityUrl, ENTITY_TYPE_ICONS, getSortNameOfDefaultAlias} = entityHelper;
 const {Col, Row} = bootstrap;
 
-export function SeriesAttributes({series}) {
+function SeriesAttributes({series}) {
 	if (series.deleted) {
 		return deletedEntityMessage;
 	}
@@ -101,6 +102,8 @@ function SeriesDisplayPage({entity, identifierTypes, user, genderOptions, wikipe
 	}, [reviewsRef]);
 
 
+	const {importMetadata} = entity;
+	const isImport = !entity.revision;
 	const urlPrefix = getEntityUrl(entity);
 	const EntityTable = getEntityTable(entity.entityType);
 	const entityKey = getEntityKey(entity.entityType);
@@ -158,15 +161,24 @@ function SeriesDisplayPage({entity, identifierTypes, user, genderOptions, wikipe
 				</Row>
 			</React.Fragment>}
 			<hr className="margin-top-d40"/>
-			<EntityFooter
-				bbid={entity.bbid}
-				deleted={entity.deleted}
-				entityType={entity.type}
-				entityUrl={urlPrefix}
-				lastModified={entity.revision.revision.createdAt}
-				user={user}
-			/>
-			{!entity.deleted && <CBReviewModal
+			{importMetadata ?
+				<ImportFooter
+					hasVoted={importMetadata.userHasVoted}
+					importUrl={urlPrefix}
+					importedAt={importMetadata.importedAt}
+					source={importMetadata.source}
+					type={entity.type}
+				/> :
+				<EntityFooter
+					bbid={entity.bbid}
+					deleted={entity.deleted}
+					entityType={entity.type}
+					entityUrl={urlPrefix}
+					lastModified={entity.revision.revision.createdAt}
+					user={user}
+				/>}
+			{!entity.deleted && !isImport &&
+			<CBReviewModal
 				entityBBID={entity.bbid}
 				entityName={entity.defaultAlias.name}
 				entityType={entity.type}
@@ -174,7 +186,7 @@ function SeriesDisplayPage({entity, identifierTypes, user, genderOptions, wikipe
 				handleUpdateReviews={handleUpdateReviews}
 				showModal={showCBReviewModal}
 				userId={user?.id}
-			                    />}
+			/>}
 		</div>
 	);
 }

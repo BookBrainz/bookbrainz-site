@@ -28,6 +28,8 @@ import type {Response as $Response, NextFunction, Request} from 'express';
 import {ENTITY_TYPES, getRelationshipTargetBBIDByTypeId} from '../../client/helpers/entity';
 import {getWikipediaExtract, selectWikipediaPage} from './wikimedia';
 
+import {ImportMetadataWithSourceT} from 'bookbrainz-data/lib/types/imports';
+import {type ORM} from 'bookbrainz-data';
 import _ from 'lodash';
 import {getAcceptedLanguageCodes} from './i18n';
 import {getReviewsFromCB} from './critiquebrainz';
@@ -282,6 +284,30 @@ export async function redirectedBbid(req: $Request, res: $Response, next: NextFu
 	return next();
 }
 
+export type ImportMetadataWithVote = ImportMetadataWithSourceT & {
+	userHasVoted: boolean;
+};
+
+async function loadImportMetadata(orm: ORM, importId: string, userId?: number): Promise<ImportMetadataWithVote> {
+	const [votes, metadata] = await orm.bookshelf.transaction(
+		(transacting) =>
+			Promise.all([
+				orm.func.imports.discardVotesCast(
+					transacting, importId
+				),
+				orm.func.imports.getImportMetadata(
+					transacting, importId
+				)
+			])
+	);
+
+	return {
+		...metadata,
+		importedAt: moment(metadata.importedAt).format('YYYY-MM-DD'),
+		userHasVoted: userId ? Boolean(votes.find(vote => vote.editorId === userId)) : false,
+	};
+}
+
 export function makeEntityLoader(modelName: string, additionalRels: Array<string>, errMessage: string) {
 	const relations = [
 		'aliasSet.aliases.language',
@@ -309,8 +335,15 @@ export function makeEntityLoader(modelName: string, additionalRels: Array<string
 					entity.collections = entity.collections.filter(collection => collection.public === true ||
 					parseInt(collection.ownerId, 10) === parseInt(req.user?.id, 10));
 				}
-				const reviews = await getReviewsFromCB(bbid, entity.type);
-				entity.reviews = reviews;
+				if (entity.revision) {
+					entity.reviews = await getReviewsFromCB(bbid, entity.type);
+				}
+				else {
+					// Entity is a pending import
+					const userId = _.get(req, 'session.passport.user.id');
+					entity.importMetadata = await loadImportMetadata(orm, bbid, userId);
+					entity.reviews = {reviews: [], successfullyFetched: true};
+				}
 				res.locals.entity = entity;
 				return next();
 			}
@@ -334,26 +367,24 @@ export function makeImportLoader(modelName, additionalRels, errMessage) {
 		'identifierSet.identifiers.type'
 	].concat(additionalRels);
 
-	return async (req, res, next, _importId) => {
-		const importId = parseInt(_importId, 10);
-
-		if (commonUtils.isValidImportId(importId)) {
-			const {orm} = req.app.locals;
+	return async (req, res: $Response, next: NextFunction, importId: string) => {
+		if (commonUtils.isValidBBID(importId)) {
+			const {orm}: {orm: ORM} = req.app.locals;
 			const model = commonUtils.getImportModelByType(orm, modelName);
 			try {
-				const importEntityRecord = await model.forge({importId})
+				const importEntityRecord = await model.forge({bbid: importId})
 					.fetch({
 						withRelated: relations
 					});
 				res.locals.importEntity = importEntityRecord.toJSON();
 
-				const [votes, details] = await orm.bookshelf.transaction(
+				const [votes, metadata] = await orm.bookshelf.transaction(
 					(transacting) =>
 						Promise.all([
 							orm.func.imports.discardVotesCast(
 								transacting, importId
 							),
-							orm.func.imports.getImportDetails(
+							orm.func.imports.getImportMetadata(
 								transacting, importId
 							)
 						])
@@ -370,9 +401,9 @@ export function makeImportLoader(modelName, additionalRels, errMessage) {
 					res.locals.importEntity.hasVoted = false;
 				}
 
-				res.locals.importEntity.source = details.source;
+				res.locals.importEntity.source = metadata.source;
 				res.locals.importEntity.importedAt =
-					moment(details.importedAt).format('YYYY-MM-DD');
+					moment(metadata.importedAt as any).format('YYYY-MM-DD');
 			}
 			catch (err) {
 				return next(new error.NotFoundError(errMessage, req));

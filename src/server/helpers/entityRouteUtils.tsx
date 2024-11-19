@@ -27,7 +27,7 @@ import * as propHelpers from '../../client/helpers/props';
 import * as unifiedRoutes from '../routes/entity/process-unified-form';
 import * as utils from './utils';
 
-import type {Request as $Request, Response as $Response} from 'express';
+import type {Request as $Request, Response as $Response, NextFunction} from 'express';
 import {filterIdentifierTypesByEntityType, isValidBBID} from '../../common/helpers/utils';
 import EntityEditor from '../../client/entity-editor/entity-editor';
 import EntityMerge from '../../client/entity-editor/entity-merge';
@@ -256,7 +256,8 @@ export function makeEntityCreateOrEditHandler(
 
 	return function createOrEditHandler(
 		req: PassportRequest,
-		res: $Response
+		res: $Response,
+		next: NextFunction,
 	) {
 		const {mergeQueue} = req.session;
 		const isMergeOperation = isMergeHandler && mergeQueue && _.size(mergeQueue.mergingEntities) >= 2;
@@ -268,7 +269,7 @@ export function makeEntityCreateOrEditHandler(
 		req.body = transformNewForm(req.body);
 
 		return entityRoutes.handleCreateOrEditEntity(
-			req, res, entityName, _.pick(req.body, propertiesToPick), isMergeOperation
+			req, res, next, entityName, _.pick(req.body, propertiesToPick), isMergeOperation
 		);
 	};
 }

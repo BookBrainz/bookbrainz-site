@@ -30,6 +30,7 @@ import EntityLinks from './links';
 import EntityRelatedCollections from './related-collections';
 import EntityReviews from './cb-review';
 import EntityTitle from './title';
+import ImportFooter from '../import-entities/footer';
 import PropTypes from 'prop-types';
 import WikipediaExtract from './wikipedia-extract';
 
@@ -39,7 +40,7 @@ const {deletedEntityMessage, getRelationshipSourceByTypeId, getLanguageAttribute
 const {Col, Row} = bootstrap;
 
 
-export function WorkAttributes({work}) {
+function WorkAttributes({work}) {
 	if (work.deleted) {
 		return deletedEntityMessage;
 	}
@@ -99,7 +100,8 @@ function WorkDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 		reviewsRef.current.handleClick();
 	}, [reviewsRef]);
 
-
+	const {importMetadata} = entity;
+	const isImport = !entity.revision;
 	// relationshipTypeId = 10 refers the relation (<Work> is contained by <Edition>)
 	const relationshipTypeId = 10;
 	const editionsContainWork = getRelationshipSourceByTypeId(entity, relationshipTypeId);
@@ -131,6 +133,7 @@ function WorkDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 				<EditionTable
 					editions={editionsContainWork}
 					entity={entity}
+					showAdd={!isImport}
 				/>
 				<Row>
 					<Col lg={8}>
@@ -153,15 +156,24 @@ function WorkDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 				</Row>
 			</React.Fragment>}
 			<hr className="margin-top-d40"/>
-			<EntityFooter
-				bbid={entity.bbid}
-				deleted={entity.deleted}
-				entityType={entity.type}
-				entityUrl={urlPrefix}
-				lastModified={entity.revision.revision.createdAt}
-				user={user}
-			/>
-			{!entity.deleted && <CBReviewModal
+			{importMetadata ?
+				<ImportFooter
+					hasVoted={importMetadata.userHasVoted}
+					importUrl={urlPrefix}
+					importedAt={importMetadata.importedAt}
+					source={importMetadata.source}
+					type={entity.type}
+				/> :
+				<EntityFooter
+					bbid={entity.bbid}
+					deleted={entity.deleted}
+					entityType={entity.type}
+					entityUrl={urlPrefix}
+					lastModified={entity.revision.revision.createdAt}
+					user={user}
+				/>}
+			{!entity.deleted && !isImport &&
+			<CBReviewModal
 				entityBBID={entity.bbid}
 				entityName={entity.defaultAlias.name}
 				entityType={entity.type}
@@ -169,7 +181,7 @@ function WorkDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 				handleUpdateReviews={handleUpdateReviews}
 				showModal={showCBReviewModal}
 				userId={user?.id}
-			                    />}
+			/>}
 		</div>
 	);
 }

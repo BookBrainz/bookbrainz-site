@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import DeletionImportEntityPage from
+import DiscardImportEntityPage from
 	'../../components/pages/import-entities/discard-import-entity.js';
 import Layout from '../../containers/layout';
 import React from 'react';
@@ -29,8 +29,8 @@ const props = propsTarget ? JSON.parse(propsTarget.innerHTML) : {};
 
 const markup = (
 	<Layout {...extractLayoutProps(props)}>
-		<DeletionImportEntityPage
-			importEntity={props.importEntity}
+		<DiscardImportEntityPage
+			importEntity={props.entity}
 		/>
 	</Layout>
 );

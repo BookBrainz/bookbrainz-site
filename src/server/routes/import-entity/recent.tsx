@@ -19,6 +19,7 @@
 import * as propHelpers from '../../../client/helpers/props';
 import {escapeProps, generateProps} from '../../helpers/props';
 import Layout from '../../../client/containers/layout';
+import {type ORM} from 'bookbrainz-data';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import RecentImports from
@@ -34,7 +35,7 @@ const router = express.Router();
 
 /* Function to fetch data from the database and create the object to be sent as
 	response */
-function fetchRecentImportsData(orm, page) {
+function fetchRecentImportsData(orm: ORM, page: number) {
 	let pageNumber = page;
 
 	return orm.bookshelf.transaction(async (transacting) => {

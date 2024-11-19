@@ -292,7 +292,7 @@ NameSection.propTypes = {
 	action: PropTypes.string,
 	disambiguationDefaultValue: PropTypes.string,
 	entityType: entityTypeProperty.isRequired,
-	exactMatches: PropTypes.object,
+	exactMatches: PropTypes.array,
 	isModal: PropTypes.bool,
 	isUnifiedForm: PropTypes.bool,
 	languageOptions: PropTypes.array.isRequired,
@@ -306,7 +306,7 @@ NameSection.propTypes = {
 	onNameChangeSearchName: PropTypes.func.isRequired,
 	onSortNameChange: PropTypes.func.isRequired,
 	searchForExistingEditionGroup: PropTypes.bool,
-	searchResults: PropTypes.object,
+	searchResults: PropTypes.array,
 	sortNameValue: PropTypes.string.isRequired
 };
 NameSection.defaultProps = {

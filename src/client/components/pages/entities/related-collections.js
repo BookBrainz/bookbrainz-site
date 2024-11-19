@@ -51,7 +51,7 @@ function EntityRelatedCollections({collections}) {
 }
 EntityRelatedCollections.displayName = 'EntityRelatedCollections';
 EntityRelatedCollections.propTypes = {
-	collections: PropTypes.object.isRequired
+	collections: PropTypes.array.isRequired
 };
 
 export default EntityRelatedCollections;

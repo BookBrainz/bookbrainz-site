@@ -19,6 +19,7 @@
 
 import * as auth from '../../helpers/auth';
 import * as entityRoutes from './entity';
+import * as importRoutes from '../import-entity/import-routes';
 import * as middleware from '../../helpers/middleware';
 import * as search from '../../../common/helpers/search';
 import * as utils from '../../helpers/utils';
@@ -368,5 +369,24 @@ router.post('/:bbid/edit/handler', auth.isAuthenticatedForHandler, auth.isAuthor
 
 router.post('/:bbid/merge/handler', auth.isAuthenticatedForHandler, auth.isAuthorized(ENTITY_EDITOR),
 	mergeHandler);
+
+/** Special routes for pending entity imports */
+
+router.get(
+	'/:bbid/approve',
+	auth.isAuthenticatedForHandler,
+	importRoutes.approveImportEntity
+);
+
+router.get('/:bbid/discard', auth.isAuthenticated, (req, res, next) => {
+	_setWorkTitle(res);
+	importRoutes.displayDiscardImportEntity(req, res, next);
+});
+
+router.post(
+	'/:bbid/discard/handler',
+	auth.isAuthenticatedForHandler,
+	importRoutes.handleDiscardImportEntity
+);
 
 export default router;

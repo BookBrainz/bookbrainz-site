@@ -25,6 +25,7 @@ import EntityImage from './image';
 import EntityLinks from './links';
 import EntityRelatedCollections from './related-collections';
 import EntityTitle from './title';
+import ImportFooter from '../import-entities/footer';
 import PropTypes from 'prop-types';
 import React from 'react';
 import WikipediaExtract from './wikipedia-extract';
@@ -34,7 +35,7 @@ const {deletedEntityMessage, extractAttribute, getTypeAttribute, getEntityUrl,
 	ENTITY_TYPE_ICONS, getSortNameOfDefaultAlias, transformISODateForDisplay} = entityHelper;
 const {Col, Row} = bootstrap;
 
-export function PublisherAttributes({publisher}) {
+function PublisherAttributes({publisher}) {
 	if (publisher.deleted) {
 		return deletedEntityMessage;
 	}
@@ -83,6 +84,8 @@ PublisherAttributes.propTypes = {
 
 
 function PublisherDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
+	const {importMetadata} = entity;
+	const isImport = !entity.revision;
 	const urlPrefix = getEntityUrl(entity);
 	return (
 		<div>
@@ -103,7 +106,7 @@ function PublisherDisplayPage({entity, identifierTypes, user, wikipediaExtract})
 			<EntityAnnotation entity={entity}/>
 			{!entity.deleted &&
 			<React.Fragment>
-				<EditionTable showAuthorCreditsColumn editions={entity.editions} entity={entity}/>
+				<EditionTable showAuthorCreditsColumn editions={entity.editions} entity={entity} showAdd={!isImport}/>
 				<EntityLinks
 					entity={entity}
 					identifierTypes={identifierTypes}
@@ -112,14 +115,22 @@ function PublisherDisplayPage({entity, identifierTypes, user, wikipediaExtract})
 				<EntityRelatedCollections collections={entity.collections}/>
 			</React.Fragment>}
 			<hr className="margin-top-d40"/>
-			<EntityFooter
-				bbid={entity.bbid}
-				deleted={entity.deleted}
-				entityType={entity.type}
-				entityUrl={urlPrefix}
-				lastModified={entity.revision.revision.createdAt}
-				user={user}
-			/>
+			{importMetadata ?
+				<ImportFooter
+					hasVoted={importMetadata.userHasVoted}
+					importUrl={urlPrefix}
+					importedAt={importMetadata.importedAt}
+					source={importMetadata.source}
+					type={entity.type}
+				/> :
+				<EntityFooter
+					bbid={entity.bbid}
+					deleted={entity.deleted}
+					entityType={entity.type}
+					entityUrl={urlPrefix}
+					lastModified={entity.revision.revision.createdAt}
+					user={user}
+				/>}
 		</div>
 	);
 }

@@ -17,12 +17,10 @@
  */
 
 import * as bootstrap from 'react-bootstrap';
-import {
-	getImportDiscardUrl, getImportUrl
-} from '../../../helpers/import-entity';
 import LoadingSpinner from '../../loading-spinner';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {getEntityUrl} from '../../../helpers/entity';
 import request from 'superagent';
 
 
@@ -48,12 +46,11 @@ class DiscardImportEntity extends React.Component {
 			waiting: true
 		});
 
-		const discardUrl = getImportDiscardUrl(this.props.importEntity);
-		const importUrl = getImportUrl(this.props.importEntity);
+		const entityUrl = getEntityUrl(this.props.importEntity);
 
-		request.post(discardUrl)
+		request.post(`${entityUrl}/discard/handler`)
 			.then(() => {
-				window.location.href = importUrl;
+				window.location.href = entityUrl;
 			})
 			.catch((res) => {
 				const {error} = res.body;
@@ -105,7 +102,7 @@ class DiscardImportEntity extends React.Component {
 						</Card>
 						<ButtonGroup className="d-flex margin-top-2">
 							<Button
-								href={getImportUrl(importEntity)}
+								href={getEntityUrl(importEntity)}
 								title="Cancel"
 								variant="secondary"
 							>

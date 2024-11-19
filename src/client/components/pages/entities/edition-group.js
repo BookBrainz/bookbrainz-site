@@ -31,6 +31,7 @@ import EntityLinks from './links';
 import EntityRelatedCollections from './related-collections';
 import EntityReviews from './cb-review';
 import EntityTitle from './title';
+import ImportFooter from '../import-entities/footer';
 import PropTypes from 'prop-types';
 import WikipediaExtract from './wikipedia-extract';
 
@@ -38,7 +39,7 @@ import WikipediaExtract from './wikipedia-extract';
 const {deletedEntityMessage, getTypeAttribute, getEntityUrl, ENTITY_TYPE_ICONS, getSortNameOfDefaultAlias} = entityHelper;
 const {Col, Row} = bootstrap;
 
-export function EditionGroupAttributes({editionGroup}) {
+function EditionGroupAttributes({editionGroup}) {
 	if (editionGroup.deleted) {
 		return deletedEntityMessage;
 	}
@@ -91,6 +92,8 @@ function EditionGroupDisplayPage({entity, identifierTypes, user, wikipediaExtrac
 		reviewsRef.current.handleClick();
 	}, [reviewsRef]);
 
+	const {importMetadata} = entity;
+	const isImport = !entity.revision;
 	const urlPrefix = getEntityUrl(entity);
 	const hasAuthorCredits = entity.creditSection;
 
@@ -137,7 +140,7 @@ function EditionGroupDisplayPage({entity, identifierTypes, user, wikipediaExtrac
 			<EntityAnnotation entity={entity}/>
 			{!entity.deleted &&
 			<React.Fragment>
-				<EditionTable editions={entity.editions} entity={entity}/>
+				<EditionTable editions={entity.editions} entity={entity} showAdd={!isImport}/>
 				<Row>
 					<Col lg={8}>
 						<EntityLinks
@@ -160,15 +163,24 @@ function EditionGroupDisplayPage({entity, identifierTypes, user, wikipediaExtrac
 				</Row>
 			</React.Fragment>}
 			<hr className="margin-top-d40"/>
-			<EntityFooter
-				bbid={entity.bbid}
-				deleted={entity.deleted}
-				entityType={entity.type}
-				entityUrl={urlPrefix}
-				lastModified={entity.revision.revision.createdAt}
-				user={user}
-			/>
-			{!entity.deleted && <CBReviewModal
+			{importMetadata ?
+				<ImportFooter
+					hasVoted={importMetadata.userHasVoted}
+					importUrl={urlPrefix}
+					importedAt={importMetadata.importedAt}
+					source={importMetadata.source}
+					type={entity.type}
+				/> :
+				<EntityFooter
+					bbid={entity.bbid}
+					deleted={entity.deleted}
+					entityType={entity.type}
+					entityUrl={urlPrefix}
+					lastModified={entity.revision.revision.createdAt}
+					user={user}
+				/>}
+			{!entity.deleted && !isImport &&
+			<CBReviewModal
 				entityBBID={entity.bbid}
 				entityName={entity.defaultAlias.name}
 				entityType={entity.type}
@@ -176,7 +188,7 @@ function EditionGroupDisplayPage({entity, identifierTypes, user, wikipediaExtrac
 				handleUpdateReviews={handleUpdateReviews}
 				showModal={showCBReviewModal}
 				userId={user?.id}
-			                    />}
+			/>}
 		</div>
 	);
 }

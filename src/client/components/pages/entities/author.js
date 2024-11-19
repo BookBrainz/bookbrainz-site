@@ -31,6 +31,7 @@ import EntityRelatedCollections from './related-collections';
 import EntityReviews from './cb-review';
 import EntityTitle from './title';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import ImportFooter from '../import-entities/footer';
 import PropTypes from 'prop-types';
 import WikipediaExtract from './wikipedia-extract';
 import {kebabCase as _kebabCase} from 'lodash';
@@ -42,7 +43,7 @@ const {deletedEntityMessage, extractAttribute, getTypeAttribute, getEntityUrl,
 	ENTITY_TYPE_ICONS, getSortNameOfDefaultAlias, transformISODateForDisplay} = entityHelper;
 const {Button, Col, Row} = bootstrap;
 
-export function AuthorAttributes({author}) {
+function AuthorAttributes({author}) {
 	if (author.deleted) {
 		return deletedEntityMessage;
 	}
@@ -130,6 +131,8 @@ function AuthorDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 		reviewsRef.current.handleClick();
 	}, [reviewsRef]);
 
+	const {importMetadata} = entity;
+	const isImport = !entity.revision;
 	const urlPrefix = getEntityUrl(entity);
 	const editions = [];
 	if (entity?.authorCredits) {
@@ -163,20 +166,21 @@ function AuthorDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 				<React.Fragment>
 					<Row>
 						<Col lg={8}>
-							<EditionTable editions={editions} entity={entity}/>
+							<EditionTable editions={editions} entity={entity} showAdd={!isImport}/>
 							<EntityLinks
 								entity={entity}
 								identifierTypes={identifierTypes}
 								urlPrefix={urlPrefix}
 							/>
 							<EntityRelatedCollections collections={entity.collections}/>
-							<Button
-								className="margin-top-d15"
-								href={`/work/create?${_kebabCase(entity.type)}=${entity.bbid}`}
-								variant="success"
-							>
-								<FontAwesomeIcon className="margin-right-0-5" icon={faPlus}/>Add Work
-							</Button>
+							{!isImport &&
+								<Button
+									className="margin-top-d15"
+									href={`/work/create?${_kebabCase(entity.type)}=${entity.bbid}`}
+									variant="success"
+								>
+									<FontAwesomeIcon className="margin-right-0-5" icon={faPlus}/>Add Work
+								</Button>}
 						</Col>
 						<Col lg={4}>
 							<EntityReviews
@@ -190,15 +194,24 @@ function AuthorDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 					</Row>
 				</React.Fragment>}
 			<hr className="margin-top-d40"/>
-			<EntityFooter
-				bbid={entity.bbid}
-				deleted={entity.deleted}
-				entityType={entity.type}
-				entityUrl={urlPrefix}
-				lastModified={entity.revision.revision.createdAt}
-				user={user}
-			/>
-			{!entity.deleted && <CBReviewModal
+			{importMetadata ?
+				<ImportFooter
+					hasVoted={importMetadata.userHasVoted}
+					importUrl={urlPrefix}
+					importedAt={importMetadata.importedAt}
+					source={importMetadata.source}
+					type={entity.type}
+				/> :
+				<EntityFooter
+					bbid={entity.bbid}
+					deleted={entity.deleted}
+					entityType={entity.type}
+					entityUrl={urlPrefix}
+					lastModified={entity.revision.revision.createdAt}
+					user={user}
+				/>}
+			{!entity.deleted && !isImport &&
+			<CBReviewModal
 				entityBBID={entity.bbid}
 				entityName={entity.defaultAlias.name}
 				entityType={entity.type}
@@ -206,7 +219,7 @@ function AuthorDisplayPage({entity, identifierTypes, user, wikipediaExtract}) {
 				handleUpdateReviews={handleUpdateReviews}
 				showModal={showCBReviewModal}
 				userId={user?.id}
-			                    />}
+			/>}
 		</div>
 	);
 }
