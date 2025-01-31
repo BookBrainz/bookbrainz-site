@@ -66,7 +66,7 @@ class IndexPage extends React.Component {
 										<input
 											required
 											autoFocus="autofocus"
-											className="form-control"
+											className={`form-control ${this.props.darkMode ? 'dark-mode' : ''}`}
 											name="q"
 											placeholder="Search for..."
 											type="text"
@@ -265,7 +265,7 @@ class IndexPage extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className={this.props.darkMode ? 'dark-mode' : ''}>
 				{this.renderHeader()}
 				{this.renderContent()}
 			</div>
@@ -275,6 +275,7 @@ class IndexPage extends React.Component {
 
 IndexPage.displayName = 'IndexPage';
 IndexPage.propTypes = {
+	darkMode: PropTypes.bool.isRequired,
 	disableSignUp: PropTypes.bool,
 	isLoggedIn: PropTypes.bool.isRequired,
 	recent: PropTypes.array.isRequired,
