@@ -8,6 +8,7 @@
 /reports
 /config/config.json
 /config/config.local.json
+/config.json
 
 # Directory designated to store local compose overrides and related files
 /local/

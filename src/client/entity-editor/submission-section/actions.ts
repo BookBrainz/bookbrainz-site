@@ -23,7 +23,6 @@ import _ from 'lodash';
 import {filterObject} from '../../../common/helpers/utils';
 import request from 'superagent';
 
-
 export const SET_SUBMIT_ERROR = 'SET_SUBMIT_ERROR';
 export const UPDATE_REVISION_NOTE = 'UPDATE_REVISION_NOTE';
 export const SET_SUBMITTED = 'SET_SUBMITTED';
