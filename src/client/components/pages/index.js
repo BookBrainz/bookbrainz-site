@@ -21,7 +21,7 @@
 
 import * as bootstrap from 'react-bootstrap';
 
-import {faCircle, faCommentDots, faComments, faEnvelope, faListUl, faSearch, faUser} from '@fortawesome/free-solid-svg-icons';
+import {faCircle, faCommentDots, faComments, faEnvelope, faListUl, faSearch, faUser, faX} from '@fortawesome/free-solid-svg-icons';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
@@ -151,10 +151,11 @@ class IndexPage extends React.Component {
 												className="margin-sides-1 contact-text"
 												icon={faCircle}
 											/>
-											<a className="contact-text" href="https://x.com/BookBrainz">
+
+											<a className="contact-text" href="https://x.com/bookbrainz">
 												<FontAwesomeIcon
 													className="contact-text"
-													icon={faXTwitter}
+													icon={faX}
 													size="2x"
 												/>
 												X
